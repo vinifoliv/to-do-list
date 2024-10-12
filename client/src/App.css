@@ -1,0 +1,15 @@
+.card {
+    background-color: #eee;
+    border-radius: 10px;
+    padding: 20px 40px;
+    margin: 10vh auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50vw;
+}
+
+.titulo-app {
+    font-size: 3rem;
+    text-align: center;
+}

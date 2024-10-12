@@ -1,0 +1,38 @@
+.tarefa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: .5px solid #ff0000;
+    padding: 10px 15px;
+    border-radius: 10px;
+    width: 70%;
+}
+
+.dados-tarefa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    width: 90%;
+}
+
+#checkbox {
+    width: 2rem;
+    height: 2rem;
+}
+
+#titulo-tarefa {
+    padding: 5px 10px;
+    width: 50%;
+    border: .5px solid gray;
+    border-radius: 10px;
+}
+
+#descricao {
+    outline: none;
+    width: 90%;
+    resize: none;
+    border-radius: 5px;
+    padding: 5px 10px;  
+    max-height: 5vh;
+}

@@ -1,0 +1,13 @@
+:root {
+    font-size: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background-color: #b30000;
+}
