@@ -5,7 +5,7 @@ export default function Tarefa() {
         <div className="tarefa">
             <div className='dados-tarefa'>
                 <input type="checkbox" id="checkbox" /> &nbsp;
-                <input type="text" id="titulo-tarefa" placeholder="Título"/> &nbsp;
+                <input type="text" id="titulo-tarefa" placeholder="Título" /> &nbsp;
                 <input type="date" id="data" /> &nbsp;
                 <span className="material-icons">delete_forever</span> <br />
             </div>
