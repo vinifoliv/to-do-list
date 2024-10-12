@@ -14,7 +14,7 @@ class Database {
         const client = await this.pool.connect();
 
         try {
-            return await client.query("SELECT * FROM tarefas WHERE id_usuario = " + idUsuario + ";").rows;
+            return (await client.query("SELECT * FROM tarefas WHERE id_usuario = " + idUsuario + ";")).rows;
         }
         catch (erro) {
             console.error(erro);

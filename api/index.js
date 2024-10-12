@@ -15,6 +15,10 @@ app.get('/', (request, response) => {
 app.get('/tarefas-usuario', async (request, response) => {
     console.log('Buscando dados no banco...');
     let tarefas = await database.selectTarefasUsuario(1);
+
+    for (let i = 0; i < tarefas.length; i++) {
+        console.log(tarefas[i]);
+    }
 });
 
 // SUBINDO O SERVIDOR
