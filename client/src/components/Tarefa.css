@@ -5,8 +5,8 @@
     border: .5px solid #ff0000;
     padding: 10px 15px;
     border-radius: 10px;
-    width: 70%;
-    margin-bottom: 20px;
+    width: 100%;
+    margin: auto auto 20px;
 }
 
 .dados-tarefa {

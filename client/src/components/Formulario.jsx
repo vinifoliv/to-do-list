@@ -5,7 +5,7 @@ const DOMAIN = 'http://localhost:9000';
 export default function Formulario() {
 
     return (
-      <form className="tarefa">
+      <form id="tarefa">
         <div className="dados-tarefa">
           <input type="text" id="titulo-tarefa" placeholder="Título" /> &nbsp;
           &nbsp;
