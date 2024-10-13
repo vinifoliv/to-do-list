@@ -3,25 +3,28 @@ const express = require("express");
 const app = express();
 const { Database } = require('./database');
 
+// Definindo configuracoes
 require('dotenv').config({ override: true }); // Carrega as variáveis de ambiente
 const database = new Database();
-const PORT = 3000;
+const PORT = 9000;
+app.use(express.json());
 
 // ROTAS
-app.get('/', (request, response) => {
+app.get('/', (request, response) => { // Rota padrao para testes
     response.send('A API está funcionando');
 });
 
-app.get('/tarefas-usuario', async (request, response) => {
-    console.log('Buscando dados no banco...');
+app.get('/consultar-tarefas', async (request, response) => {
     let tarefas = await database.selectTarefasUsuario(1);
 
-    for (let i = 0; i < tarefas.length; i++) {
-        console.log(tarefas[i]);
-    }
+    response.send(JSON.stringify(tarefas));
+});
+
+app.get('/adicionar-tarefa', async (request, response) => {
+    await database.adicionarTarefa(JSON.parse(request.body));
 });
 
 // SUBINDO O SERVIDOR
 app.listen(PORT, () => {
-    console.log("Servidor rodando em http://localhost:3000");
+    console.log("Servidor rodando em http://localhost:" + PORT);
 });
