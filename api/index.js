@@ -1,13 +1,16 @@
 // IMPORTS
 const express = require("express");
 const app = express();
+const cors = require('cors');
 const { Database } = require('./database');
 
 // Definindo configuracoes
 require('dotenv').config({ override: true }); // Carrega as variáveis de ambiente
 const database = new Database();
-const PORT = 9000;
 app.use(express.json());
+app.use(cors({ // Garantindo que a requisicao nao seja recusada (sim, a seguranca foi para o beleleu)
+    origin: '*'
+}));
 
 // ROTAS
 app.get('/', (request, response) => { // Rota padrao para testes
@@ -20,11 +23,13 @@ app.get('/consultar-tarefas', async (request, response) => {
     response.send(JSON.stringify(tarefas));
 });
 
-app.get('/adicionar-tarefa', async (request, response) => {
-    await database.adicionarTarefa(JSON.parse(request.body));
+app.post('/adicionar-tarefa', async (request, response) => {
+    console.log(request.body);
+    await database.adicionarTarefa(request.body);
+    response.sendStatus(200);
 });
 
 // SUBINDO O SERVIDOR
-app.listen(PORT, () => {
-    console.log("Servidor rodando em http://localhost:" + PORT);
+app.listen(9000, () => {
+    console.log("Servidor rodando em http://localhost:9000");
 });

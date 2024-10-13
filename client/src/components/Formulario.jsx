@@ -1,31 +1,31 @@
 import './Formulario.css';
 
-const DOMAIN = 'localhost:9000';
+const DOMAIN = 'http://localhost:9000';
 
 export default function Formulario() {
 
     return (
-        <form className="tarefa">
-            <div className='dados-tarefa'>
-                <input type="text" id="titulo-tarefa" placeholder="Título" /> &nbsp; &nbsp;
-                <input type="date" id="vencimento" />
-            </div>
-            <textarea id="descricao" placeholder='Descrição'></textarea>
-            <button type="button" id="adicionar-tarefa" onClick={adicionarTarefa}>Adicionar</button>
-        </form>
+      <form className="tarefa">
+        <div className="dados-tarefa">
+          <input type="text" id="titulo-tarefa" placeholder="Título" /> &nbsp;
+          &nbsp;
+          <input type="date" id="vencimento" />
+        </div>
+        <textarea id="descricao" placeholder="Descrição"></textarea>
+        <button type="button" id="adicionar-tarefa" onClick={adicionarTarefa}>
+          Adicionar
+        </button>
+      </form>
     );
 }
 
-// Funcoes
-
 // Adiciona uma tarefa no banco de dados
-const adicionarTarefa = () => {
-    let tarefa = montarTarefa();
+const adicionarTarefa = async () => {
+    let tarefa = montarTarefa(); // OK
   
-    // Se o objeto for null, retorna
-    if (!tarefa) return;
+    if (!tarefa) return; // Se houve erro ao montar a tarefa, ele nao prossegue para a requisicao
     
-    // Configuracoes para o POST
+    // Configuracoes para o POST - OK
     const options = {
         method: 'POST',
         headers: {
@@ -33,16 +33,20 @@ const adicionarTarefa = () => {
         },
         body: JSON.stringify(tarefa)
     }
-  
+
+    alert(DOMAIN + '/adicionar-tarefa');
+
     // Requisicao para a API
-    fetch(DOMAIN + '/adicionar-tarefa', options).then((response) => {
+    fetch(DOMAIN + '/adicionar-tarefa', options)
+    .then((response) => {
       if (response.ok) {
         alert("Tarefa adicionada com sucesso!");
       }
       else {
         alert("Houve um problema na resposta à requisição.");
       }
-    }).catch(error => {
+    })
+    .catch(error => {
       alert("Erro ao adicionar tarefa: " + error);
     });
   }
@@ -53,9 +57,9 @@ const adicionarTarefa = () => {
     let data = document.getElementById('vencimento').value;
     let descricao = document.getElementById('descricao').value;
   
-    if ((titulo == '' || titulo == null) ||
-        (data == '' || data == null) ||
-        (descricao == '' || data == null)) {
+    if ((titulo === '' || titulo === null) ||
+        (data === '' || data === null) ||
+        (descricao === '' || data === null)) {
           alert('Preencha todos os campos!');
           return null;
         }
