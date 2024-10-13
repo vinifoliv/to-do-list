@@ -29,7 +29,7 @@ export default function Tarefa(props) {
                 <input type="checkbox" id={id + '-checkbox'} className="checkbox" /> &nbsp;
                 <input type="text" className="titulo-tarefa" id={id + '-titulo-tarefa'}/> &nbsp;
                 <input type="date" className="data" id={id + '-data'}/> &nbsp;
-                <span className="material-icons">delete_forever</span> <br />
+                <span className="material-icons" onClick={() => props.onRemove(id)}>delete_forever</span> <br />
             </div>
             <textarea className="descricao" id={id + '-descricao'}></textarea>
         </div>

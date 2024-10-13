@@ -4,6 +4,7 @@ import Tarefa from './Tarefa';
 import Filtro from './Filtro';
 
 export default function Carrossel() {
+    const DOMAIN = 'http://localhost:9000';
 
     // Hooks ----------------------------------------------------------------------------------------------------
 
@@ -23,7 +24,7 @@ export default function Carrossel() {
         <div className="carrosel" id="carrossel">
             <Filtro onClick={ handleClick }/>
             <Suspense fallback={ <h4>Carregando as suas tarefas...</h4>} >
-                { tarefasFiltradas.map((tarefa => <Tarefa dados={tarefa}/>)) }
+                { tarefasFiltradas.map((tarefa => <Tarefa dados={tarefa} onRemove={removerTarefa} />)) }
             </Suspense>
         </div>
     );
@@ -31,7 +32,7 @@ export default function Carrossel() {
     // Helper functions -----------------------------------------------------------------------------------------
 
     async function consultarTarefas() {        
-        fetch('http://localhost:9000/consultar-tarefas')
+        fetch(DOMAIN + '/consultar-tarefas')
         .then((response) => {
             if (!response.ok) throw new Error('Falha na requisição');
         
@@ -41,6 +42,7 @@ export default function Carrossel() {
             setTarefas(data);
             if (tarefasFiltradas.length === 0)
                 setTarefasFiltradas(data);
+            setTipoAExibir('todas');
         })
         .catch((error) => {
             alert('Erro ao consultar suas tarefas: ' + error);
@@ -77,5 +79,18 @@ export default function Carrossel() {
                 setTarefasFiltradas(arrayAuxiliar);
                 break;
         }
+    }
+
+    async function removerTarefa(id) {
+        fetch(DOMAIN + '/remover-tarefa/' + id, { method: 'DELETE' })
+        .then((response) => {
+            if (response.ok) alert('Tarefa removida com sucesso!');
+            else throw new Error('A requisição falhou.');
+
+            consultarTarefas();
+        })
+        .catch((error) => {
+            alert('Não foi possível remover a tarefa: ' + error);
+        });
     }
 }
