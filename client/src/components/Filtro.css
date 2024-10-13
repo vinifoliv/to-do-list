@@ -1,0 +1,39 @@
+.menu {
+    border-radius: 10px; 
+    list-style-type: none;
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.menu li {
+    background-color: #f00;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    margin: auto;
+    padding: 5px;
+    width: 100%;
+    box-shadow: 0 3px 0 #af0000;    
+    transition: 0.2s;
+}
+
+.menu li:hover {
+    background-color: #cc0000;
+}
+
+.menu li:active {
+    transform: scaleY(0.95);
+    background-color: #af0000;
+    
+}
+
+
+#todas {
+    border-radius: 10px 0 0 10px;
+}
+
+#concluidas {
+    border-radius: 0 10px 10px 0;
+}
+
