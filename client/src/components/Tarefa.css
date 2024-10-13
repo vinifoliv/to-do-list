@@ -54,3 +54,12 @@ button:active {
     transform: scale(0.95);
     background-color: #b30000;
 }
+
+.material-icons {
+    transition: .2s;
+    cursor: pointer;
+}
+
+.material-icons:hover {
+    transform: scale(0.9);
+}
