@@ -19,8 +19,7 @@ app.get('/', (request, response) => { // Rota padrao para testes
 
 app.get('/consultar-tarefas', async (request, response) => {
     let tarefas = await database.selectTarefasUsuario(1);
-
-    response.send(JSON.stringify(tarefas));
+    response.json(tarefas);
 });
 
 app.post('/adicionar-tarefa', async (request, response) => {

@@ -34,8 +34,6 @@ const adicionarTarefa = async () => {
         body: JSON.stringify(tarefa)
     }
 
-    alert(DOMAIN + '/adicionar-tarefa');
-
     // Requisicao para a API
     fetch(DOMAIN + '/adicionar-tarefa', options)
     .then((response) => {
@@ -58,11 +56,10 @@ const adicionarTarefa = async () => {
     let descricao = document.getElementById('descricao').value;
   
     if ((titulo === '' || titulo === null) ||
-        (data === '' || data === null) ||
-        (descricao === '' || data === null)) {
+        (data === '' || data === null)) {
           alert('Preencha todos os campos!');
           return null;
-        }
+    }
   
     return {
         titulo: titulo,
