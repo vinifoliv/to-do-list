@@ -17,19 +17,19 @@
     width: 90%;
 }
 
-#checkbox {
+.checkbox {
     width: 2rem;
     height: 2rem;
 }
 
-#titulo-tarefa {
+.titulo-tarefa {
     padding: 5px 10px;
     width: 50%;
     border: .5px solid gray;
     border-radius: 5px;
 }
 
-#descricao {
+.descricao {
     outline: none;
     width: 90%;
     resize: none;
@@ -38,7 +38,7 @@
     max-height: 5vh;
 }
 
-#adicionar-tarefa {
+.adicionar-tarefa {
     margin: 10px auto 0;
     color: white;
     font-weight: bold;
