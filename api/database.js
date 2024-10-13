@@ -10,7 +10,7 @@ class Database {
     });
 
     // Retorna todas as tarefas para um usuário especificado
-    async selectTarefasUsuario(idUsuario) {
+    async consultarTarefas(idUsuario) {
         const client = await this.pool.connect();
 
         try {

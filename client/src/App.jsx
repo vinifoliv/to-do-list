@@ -1,8 +1,6 @@
 import './App.css';
+import Carrossel from './components/Carrossel';
 import Formulario from './components/Formulario';
-import Tarefa from './components/Tarefa';
-
-const DOMAIN = 'http://localhost:9000';
 
  function App() {
   return (
@@ -12,33 +10,10 @@ const DOMAIN = 'http://localhost:9000';
       <h3>Insira aqui a sua tarefa</h3>
       <Formulario />
 
-      <h3>Suas tarefas</h3>
-      {/* { 
-        tarefas !== undefined ? 
-          tarefas.map((tarefa) => <Tarefa dados={ tarefa }/>) : 
-            <h4>Você ainda não possui tarefas</h4> 
-      } */}
+      <h3>Suas tarefas</h3> <br />
+      <Carrossel />
     </div>
   );
-}
-
-async function consultarTarefas() {
-  let tarefas = [];
-
-  fetch(DOMAIN + '/consultar-tarefas')
-  .then((response) => {
-    if (!response.ok) throw new Error('Falha na requisição');
-
-    return response.json();
-  })
-  .then((data) => {
-    tarefas = data;
-  })
-  .catch((error) => {
-    alert('Erro ao consultar suas tarefas: ' + error);
-  });
-
-  return tarefas;
 }
 
 export default App;
