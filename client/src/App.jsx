@@ -90,12 +90,6 @@ import Tarefa from './components/Tarefa';
         let data = document.getElementById('vencimento').value;
         let descricao = document.getElementById('descricao').value;
 
-        if ((titulo === '' || titulo === null) ||
-            (data === '' || data === null)) {
-                alert('Preencha todos os campos!');
-                return null;
-        }
-
         return {
             titulo: titulo,
             vencimento: data,
@@ -111,12 +105,6 @@ import Tarefa from './components/Tarefa';
         let data = document.getElementById(id + '-data').value;
         let completa = document.getElementById(id + '-checkbox').checked;
         let descricao = document.getElementById(id + '-descricao').value;
-
-        if ((titulo === '' || titulo === null) ||
-        (data === '' || data === null)) {
-            alert('Preencha todos os campos!');
-            return null;
-        }
 
         return {
             titulo: titulo,

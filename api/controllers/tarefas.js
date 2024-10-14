@@ -24,8 +24,18 @@ router.get('/consultar-tarefas', async (request, response) => {
 
 // Adicao de tarefas 
 router.post('/adicionar-tarefa', async (request, response) => {
+    let tarefa = request.body;
+
+    // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
+    let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
+    let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+
     try {
-        let rowCount = await database.adicionarTarefa(request.body); // Objeto com a tarefa
+        // Validacao dos dados
+        if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
+        if (dataTarefa < dataHoje) throw new Error('Data inválida!');
+
+        let rowCount = await database.adicionarTarefa(tarefa); // Objeto com a tarefa
         
         console.log(rowCount)
 
@@ -40,7 +50,17 @@ router.post('/adicionar-tarefa', async (request, response) => {
 
 // Alteracao de tarefas 
 router.put('/alterar-tarefa', async (request, response) => {
+    let tarefa = request.body;
+
+    // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
+    let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
+    let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+
     try {
+        // Validacao dos dados
+        if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
+        if (dataTarefa < dataHoje) throw new Error('Data inválida!');
+        
         let rowCount = await database.alterarTarefa(request.body); // Objeto com a tarefa
         if (rowCount > 0) response.sendStatus(200);
         else response.status(404).send('Tarefa não encontrada.');
