@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './css/Tarefa.css';
 
-export default function Tarefa({ dados, onRemove }) {
+export default function Tarefa({ dados, onBlur, onRemove }) {
     
     // Hooks ----------------------------------------------------------------------------------------------------
     useEffect(() => {
@@ -25,12 +25,27 @@ export default function Tarefa({ dados, onRemove }) {
     return (
         <div className="tarefa" id={ dados['id'] }>
             <div className='dados-tarefa'>
-                <input type="checkbox" id={dados['id'] + '-checkbox'} className="checkbox" /> &nbsp;
-                <input type="text" className="titulo-tarefa" id={dados['id'] + '-titulo-tarefa'}/> &nbsp;
-                <input type="date" className="data" id={dados['id'] + '-data'}/> &nbsp;
+
+                {/* Checkbox */}
+                <input type="checkbox" id={dados['id'] + '-checkbox'} className="checkbox" 
+                onBlur={() => onBlur(dados['id'])}/> &nbsp;
+
+                {/* Titulo da tarefa */}
+                <input type="text" className="titulo-tarefa" 
+                id={dados['id'] + '-titulo-tarefa'} onBlur={() => onBlur(dados['id'])}/> &nbsp;
+
+                {/* Data de vencimento */}
+                <input type="date" className="data" id={dados['id'] + '-data'} 
+                onBlur={() => onBlur(dados['id'])}/> &nbsp;
+
+                {/* Botao de remocao */}
                 <span className="material-icons" onClick={() => onRemove(dados['id'])}>delete_forever</span> <br />
+
             </div>
-            <textarea className="descricao" id={dados['id'] + '-descricao'}></textarea>
+
+            {/* Descricao */}
+            <textarea className="descricao" id={dados['id'] + '-descricao'} onBlur={() => onBlur(dados['id'])}>
+            </textarea>
         </div>
     );
 }

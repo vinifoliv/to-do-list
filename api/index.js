@@ -27,10 +27,15 @@ app.post('/adicionar-tarefa', async (request, response) => {
     response.sendStatus(200);
 });
 
+app.put('/alterar-tarefa', async (request, response) => {
+    await database.alterarTarefa(request.body); // Objeto com a tarefa
+    response.sendStatus(200);
+});
+
 app.delete('/remover-tarefa/:id', async (request, response) => {
     await database.removerTarefa(request.params.id); // Objeto com o id da tarefa
     response.sendStatus(200);
-})
+});
 
 // SUBINDO O SERVIDOR
 app.listen(9000, () => {

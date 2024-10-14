@@ -45,6 +45,24 @@ class Database {
         }
     }
 
+    // Altera uma tarefa no banco
+    async alterarTarefa(tarefa) {
+        const client = await this.pool.connect();
+
+        try {
+            const text = 'UPDATE tarefas SET titulo = $1, vencimento = $2, completa = $3, descricao = $4 WHERE id = $5;';
+            const values = [tarefa['titulo'], tarefa['vencimento'], tarefa['completa'], tarefa['descricao'], tarefa['id']];
+
+            await client.query(text, values);
+        } 
+        catch (error) {
+            console.error(error);
+        }
+        finally {
+            client.release();
+        }
+    }
+
     async removerTarefa(id) {
         const client = await this.pool.connect();
 

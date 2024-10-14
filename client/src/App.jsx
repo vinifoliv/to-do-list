@@ -5,21 +5,21 @@ import Formulario from './components/Formulario';
 import Tarefa from './components/Tarefa';
 
  export default function App () {
-  const DOMAIN = 'http://localhost:9000';
+    const DOMAIN = 'http://localhost:9000';
 
-  // Hooks ------------------------------------------------------------------------------------------------------
-  const [ tarefas, setTarefas ] = useState([]);                   // Conjunto de todas as tarefas
-  const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
-  const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
+    // Hooks ----------------------------------------------------------------------------------------------------
+    const [ tarefas, setTarefas ] = useState([]);                   // Conjunto de todas as tarefas
+    const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
+    const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
 
-  useEffect(() => {
-    consultarTarefas();
-  }, []);             // Carrega as tarefas quando o componente renderizar
-  useEffect(() => {
-    alterarExibicao();
-  }, [ tipoAExibir ]); // Filtra as tarefas exibidas conforme o filtro selecionado
+    useEffect(() => {
+        consultarTarefas();
+    }, []);             // Carrega as tarefas quando o componente renderizar
+    useEffect(() => {
+        alterarExibicao();
+    }, [ tipoAExibir ]); // Filtra as tarefas exibidas conforme o filtro selecionado
 
-  // Markup -----------------------------------------------------------------------------------------------------
+    // Markup ---------------------------------------------------------------------------------------------------
     return (
         <div className="card">
 
@@ -36,14 +36,14 @@ import Tarefa from './components/Tarefa';
             <div className="carrosel">
                 <Filtro onClick={(tipo) => setTipoAExibir(tipo)}/>
                 <Suspense fallback={ <h4>Carregando as suas tarefas...</h4> }>
-                    { tarefasFiltradas.map((tarefa => <Tarefa dados={tarefa} onRemove={removerTarefa} />)) }
+                    { tarefasFiltradas.map((tarefa => <Tarefa dados={tarefa} onBlur={alterarTarefa} onRemove={removerTarefa} />)) }
                 </Suspense>
             </div>
 
         </div>
     );
 
-  // Helper functions -------------------------------------------------------------------------------------------
+    // Helper functions -----------------------------------------------------------------------------------------
 
     // Selecione o tipo de tarefa a ser exibida e renderiza a pagina novamente
     function alterarExibicao() {
@@ -78,8 +78,8 @@ import Tarefa from './components/Tarefa';
         }
     }
 
-    // Valida os campos e retorna um objeto com os dados da tarefa
-    function montarTarefa() {
+    // Valida os campos do formulario e retorna um objeto com os dados da tarefa
+    function montarTarefaParaInclusao() {
         let titulo = document.getElementById('titulo-tarefa').value;
         let data = document.getElementById('vencimento').value;
         let descricao = document.getElementById('descricao').value;
@@ -99,6 +99,28 @@ import Tarefa from './components/Tarefa';
         }
     }
 
+    // Valida os campos da tarefa e retorna um objeto com os seus dados
+    function montarTarefaParaAlteracao(id) {
+        let titulo = document.getElementById(id + '-titulo-tarefa').value;
+        let data = document.getElementById(id + '-data').value;
+        let completa = document.getElementById(id + '-checkbox').checked;
+        let descricao = document.getElementById(id + '-descricao').value;
+
+        if ((titulo === '' || titulo === null) ||
+        (data === '' || data === null)) {
+            alert('Preencha todos os campos!');
+            return null;
+        }
+
+        return {
+            titulo: titulo,
+            vencimento: data,
+            completa: completa,
+            descricao: descricao,
+            idUsuario: 1
+        }
+    }
+
     // Limpa o formulario de adicao de tarefas
     function limparFormulario() {
         document.getElementById('titulo-tarefa').value = '';
@@ -106,6 +128,7 @@ import Tarefa from './components/Tarefa';
         document.getElementById('descricao').value = '';
     }
 
+    // Involucro para melhorar legibilidade do codigo
     async function atualizarTarefas() {
         consultarTarefas();
     }
@@ -114,7 +137,7 @@ import Tarefa from './components/Tarefa';
     
     // Adiciona uma tarefa no banco de dados
     async function adicionarTarefa() {
-        let tarefa = montarTarefa(); // OK
+        let tarefa = montarTarefaParaInclusao(); // OK
 
         if (!tarefa) return; // Se houve erro ao montar a tarefa, ele nao prossegue para a requisicao
 
@@ -161,6 +184,35 @@ import Tarefa from './components/Tarefa';
 
         .catch((error) => {
             alert('Erro ao consultar suas tarefas: ' + error);
+        });
+    }
+
+    // Altera uma tarefa quando ela sofre alteracao
+    async function alterarTarefa(id) {
+        let tarefa = montarTarefaParaAlteracao(id);
+
+        if (!tarefa) return; // Se houve erro ao montar a tarefa, ele nao prossegue para a requisicao
+
+        const options = { // Configuracoes para o POST - OK
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(tarefa)
+        }
+
+        fetch(DOMAIN + '/alterar-tarefa', { method: 'PUT' })
+
+        .then((response) => {
+            if (response.ok) {
+                alert("Tarefa alterada com sucesso!");
+                atualizarTarefas();
+            }
+            else throw new Error('A requisição falhou.');
+        })
+
+        .catch((error) => {
+            alert('Erro ao alterar a tarefa: ' + error);
         });
     }
 
