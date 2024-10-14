@@ -14,7 +14,10 @@ class Database {
         const client = await this.pool.connect();
 
         try {
-            return (await client.query("SELECT * FROM tarefas WHERE id_usuario = " + idUsuario + ";")).rows;
+            const text = 'SELECT * FROM tarefas WHERE id_usuario = $1;';
+            const value = [ idUsuario ];
+
+            return (await client.query(text, value)).rows;
         }
         catch (error) {
             console.error(error);
@@ -34,6 +37,23 @@ class Database {
 
             await client.query(text, values);
         } 
+        catch (error) {
+            console.error(error);
+        }
+        finally {
+            client.release();
+        }
+    }
+
+    async removerTarefa(id) {
+        const client = await this.pool.connect();
+
+        try {
+            const text = 'DELETE FROM tarefas WHERE id=$1;';
+            const value = [ id ];
+
+            await client.query(text, value);
+        }
         catch (error) {
             console.error(error);
         }

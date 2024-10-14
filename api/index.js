@@ -4,7 +4,7 @@ const app = express();
 const cors = require('cors');
 const { Database } = require('./database');
 
-// Definindo configuracoes
+// Configuracoes --------------------------------------------------------------------------------------
 require('dotenv').config({ override: true }); // Carrega as variáveis de ambiente
 const database = new Database();
 app.use(express.json());
@@ -12,7 +12,7 @@ app.use(cors({ // Garantindo que a requisicao nao seja recusada (sim, a seguranc
     origin: '*'
 }));
 
-// ROTAS
+// Rotas --------------------------------------------------------------------------------------------------------
 app.get('/', (request, response) => { // Rota padrao para testes
     response.send('A API está funcionando');
 });
@@ -23,10 +23,14 @@ app.get('/consultar-tarefas', async (request, response) => {
 });
 
 app.post('/adicionar-tarefa', async (request, response) => {
-    console.log(request.body);
-    await database.adicionarTarefa(request.body);
+    await database.adicionarTarefa(request.body); // Objeto com a tarefa
     response.sendStatus(200);
 });
+
+app.delete('/remover-tarefa/:id', async (request, response) => {
+    await database.removerTarefa(request.params.id); // Objeto com o id da tarefa
+    response.sendStatus(200);
+})
 
 // SUBINDO O SERVIDOR
 app.listen(9000, () => {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './Tarefa.css';
+import './css/Tarefa.css';
 
 export default function Tarefa(props) {
     

@@ -1,4 +1,4 @@
-import './Filtro.css';
+import './css/Filtro.css';
 
 export default function Filtro(props) {
     return (

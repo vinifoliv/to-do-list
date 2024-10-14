@@ -2,26 +2,32 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: .5px solid #ff0000;
-    padding: 10px 15px;
+    border: 1px solid #ff0000;
+    box-shadow: 0 3px 0 #b30000;
+    padding: 15px;
     border-radius: 10px;
-    width: 70%;
-    margin: auto auto 20px;
+    width: 80%;
 }
 
 .dados-tarefa {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
-    width: 90%;
+    width: 100%;
 }
 
 #titulo-tarefa {
-    padding: 5px 10px;
-    width: 50%;
+    padding: 3px 10px;
+    width: 100%;
     border: .5px solid gray;
-    border-radius: 5px;
+    border-radius: 10px;
+}
+
+#vencimento {
+    border-radius: 10px;
+    border: 1px solid gray;
+    padding: 3px 10px;
+    width: 30%;
 }
 
 #descricao {
@@ -42,7 +48,7 @@
     border: none;
     background-color: #ff0000;
     transition: .2s;
-    box-shadow: 0 2px 0 #b30000;
+    box-shadow: 0 3px 0 #b30000;
 }
 
 #adicionar-tarefa:active {
