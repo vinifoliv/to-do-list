@@ -12,8 +12,12 @@ import Tarefa from './components/Tarefa';
   const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
   const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
 
-  useEffect(consultarTarefas, []);             // Carrega as tarefas quando o componente renderizar
-  useEffect(alterarExibicao, [ tipoAExibir ]); // Filtra as tarefas exibidas conforme o filtro selecionado
+  useEffect(() => {
+    consultarTarefas();
+  }, []);             // Carrega as tarefas quando o componente renderizar
+  useEffect(() => {
+    alterarExibicao();
+  }, [ tipoAExibir ]); // Filtra as tarefas exibidas conforme o filtro selecionado
 
   // Markup -----------------------------------------------------------------------------------------------------
     return (
