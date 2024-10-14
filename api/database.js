@@ -58,6 +58,7 @@ class Database {
                 tarefa['descricao'], 
                 tarefa['id'] 
             ];
+            console.log(tarefa)
 
             return (await client.query(text, values)).rowCount;
         } 

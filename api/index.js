@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const cors = require('cors');
 const { Database } = require('./database');
+const PORT = 9000;
 
 // Configuracoes --------------------------------------------------------------------------------------
 require('dotenv').config({ override: true }); // Carrega as variáveis de ambiente
@@ -46,6 +47,7 @@ app.post('/adicionar-tarefa', async (request, response) => {
 app.put('/alterar-tarefa', async (request, response) => {
     try {
         let rowCount = await database.alterarTarefa(request.body); // Objeto com a tarefa
+        console.log(rowCount)
         if (rowCount > 0) response.sendStatus(200);
         else response.status(404).send('Tarefa não encontrada.');
     }
@@ -68,6 +70,4 @@ app.delete('/remover-tarefa/:id', async (request, response) => {
 });
 
 // Rodando o servidor
-app.listen(9000, () => {
-    console.log("Servidor rodando em http://localhost:9000");
-});
+app.listen(PORT, () => console.log("Servidor rodando em http://localhost:9000"));

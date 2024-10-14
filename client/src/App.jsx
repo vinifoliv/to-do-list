@@ -123,7 +123,7 @@ import Tarefa from './components/Tarefa';
             vencimento: data,
             completa: completa,
             descricao: descricao,
-            id: 1
+            id: id
         }
     }
 
@@ -199,7 +199,8 @@ import Tarefa from './components/Tarefa';
 
         if (!tarefa) return; // Se houve erro ao montar a tarefa, ele nao prossegue para a requisicao
 
-        const options = { // Configuracoes para o POST - OK
+        // Configuracoes da requisicao
+        const options = {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -209,12 +210,16 @@ import Tarefa from './components/Tarefa';
 
         fetch(DOMAIN + '/alterar-tarefa', options)
 
-        .then((response) => {
+        .then(async (response) => {
             if (response.ok) {
                 alert('Tarefa alterada com sucesso!')
-                return consultarTarefas();
+                await consultarTarefas();
             }
-            else throw new Error('A requisição falhou.');
+            else {
+                await consultarTarefas();
+                const message = await response.text();
+                throw new Error(message);
+            };
         })
 
         .catch((error) => {
