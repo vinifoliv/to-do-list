@@ -4,6 +4,9 @@ import Filtro from './components/Filtro';
 import Formulario from './components/Formulario';
 import Tarefa from './components/Tarefa';
 
+// Resumo da lógica do frontend
+// Ao renderizar, o componente App carrega as tarefas do banco e as exibe. O manejo de que tipo de tarefas - e de quais tarefas - devem ser exibidas é feito pelo array tarefas. Toda e qualquer chamada à API ocasiona uma nova consulta do banco para a atualização do array e re-renderização.
+
  export default function App () {
     const DOMAIN = 'http://localhost:9000';
 
@@ -12,12 +15,11 @@ import Tarefa from './components/Tarefa';
     const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
     const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
 
-    useEffect(() => {
-        consultarTarefas();
-    }, []);             // Carrega as tarefas quando o componente renderizar
-    useEffect(() => {
-        alterarExibicao();
-    }, [ tipoAExibir ]); // Filtra as tarefas exibidas conforme o filtro selecionado
+    useEffect(() => async () => { // Carrega as tarefas do banco quando o componente renderizar
+        await consultarTarefas();
+    }, []);
+
+    useEffect(alterarExibicao, [ tarefas, tipoAExibir ]);
 
     // Markup ---------------------------------------------------------------------------------------------------
     return (
@@ -36,7 +38,11 @@ import Tarefa from './components/Tarefa';
             <div className="carrosel">
                 <Filtro onClick={(tipo) => setTipoAExibir(tipo)}/>
                 <Suspense fallback={ <h4>Carregando as suas tarefas...</h4> }>
-                    { tarefasFiltradas.map((tarefa => <Tarefa dados={tarefa} onBlur={alterarTarefa} onRemove={removerTarefa} />)) }
+                    {
+                        tarefasFiltradas.map((tarefa) => 
+                            <Tarefa dados={tarefa} alterarTarefa={alterarTarefa} removerTarefa={removerTarefa} />
+                        ) 
+                    }
                 </Suspense>
             </div>
 
@@ -56,7 +62,7 @@ import Tarefa from './components/Tarefa';
             
             case 'pendentes':
                 tarefas.forEach((tarefa) => {
-                    if (tarefa['completa'] === false)
+                    if (!tarefa['completa'])
                         arrayAuxiliar.push(tarefa);
                 });
 
@@ -65,7 +71,7 @@ import Tarefa from './components/Tarefa';
             
             case 'concluidas':
                 tarefas.forEach((tarefa) => {
-                    if (tarefa['completa'] === true)
+                    if (tarefa['completa'])
                         arrayAuxiliar.push(tarefa);
                 });
 
@@ -73,7 +79,7 @@ import Tarefa from './components/Tarefa';
                 break;
             
             default:
-                alert('Tipo de tarefa desconhecido');
+                alert('Erro ao filtrar tarefas: tipo de tarefa desconhecido.');
                 break;
         }
     }
@@ -117,7 +123,7 @@ import Tarefa from './components/Tarefa';
             vencimento: data,
             completa: completa,
             descricao: descricao,
-            idUsuario: 1
+            id: 1
         }
     }
 
@@ -128,20 +134,17 @@ import Tarefa from './components/Tarefa';
         document.getElementById('descricao').value = '';
     }
 
-    // Involucro para melhorar legibilidade do codigo
-    async function atualizarTarefas() {
-        consultarTarefas();
-    }
 
-    // Acesso as APIs -------------------------------------------------------------------------------------------
+    // Requisicoes a API ----------------------------------------------------------------------------------------
     
     // Adiciona uma tarefa no banco de dados
     async function adicionarTarefa() {
-        let tarefa = montarTarefaParaInclusao(); // OK
+        let tarefa = montarTarefaParaInclusao();
 
         if (!tarefa) return; // Se houve erro ao montar a tarefa, ele nao prossegue para a requisicao
 
-        const options = { // Configuracoes para o POST - OK
+        // Definindo as configurações
+        const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -149,16 +152,19 @@ import Tarefa from './components/Tarefa';
             body: JSON.stringify(tarefa)
         }
 
-        fetch(DOMAIN + '/adicionar-tarefa', options) // Requisicao para a API
-        .then((response) => {
+        // Requisição
+        fetch(DOMAIN + '/adicionar-tarefa', options)
+
+        .then(async (response) => {
             if (response.ok) {
                 alert("Tarefa adicionada com sucesso!");
                 limparFormulario();
-                atualizarTarefas();
+                await consultarTarefas();
             }
             else {
-                alert("Houve um problema na resposta à requisição.");
                 limparFormulario();
+                const message = await response.text();
+                throw new Error(message);
             }
         })
         .catch(error => {
@@ -166,20 +172,20 @@ import Tarefa from './components/Tarefa';
         });
     }
 
-    // Consulta todas as tarefas do usuario e altera o tipo de exibicao para 'todas'
-    async function consultarTarefas() {        
+    // Consulta todas as tarefas do usuario e altera o tipo de exibicao
+    async function consultarTarefas() {       
         fetch(DOMAIN + '/consultar-tarefas')
-        .then((response) => {
+        .then(async (response) => {
 
-            if (!response.ok) throw new Error('Falha na requisição');
-        
-            return response.json();
-
-        })
-
-        .then((data) => {
-            setTarefas(data);
-            setTipoAExibir('todas');
+            if (response.ok) {
+                const data = await response.json();
+                setTarefas(data);
+                alterarExibicao();
+            }
+            else {
+                const message = await response.text();
+                throw new Error(message);
+            }
         })
 
         .catch((error) => {
@@ -201,12 +207,12 @@ import Tarefa from './components/Tarefa';
             body: JSON.stringify(tarefa)
         }
 
-        fetch(DOMAIN + '/alterar-tarefa', { method: 'PUT' })
+        fetch(DOMAIN + '/alterar-tarefa', options)
 
         .then((response) => {
             if (response.ok) {
-                alert("Tarefa alterada com sucesso!");
-                atualizarTarefas();
+                alert('Tarefa alterada com sucesso!')
+                return consultarTarefas();
             }
             else throw new Error('A requisição falhou.');
         })
@@ -220,11 +226,15 @@ import Tarefa from './components/Tarefa';
     async function removerTarefa(id) {
         fetch(DOMAIN + '/remover-tarefa/' + id, { method: 'DELETE' })
 
-        .then((response) => {
-            if (response.ok) alert('Tarefa removida com sucesso!');
-            else throw new Error('A requisição falhou.');
-
-            atualizarTarefas();
+        .then(async (response) => {
+            if (response.ok) {
+                alert('Tarefa removida com sucesso!');
+                await consultarTarefas();
+            }
+            else {
+                const message = await response.text();
+                throw new Error(message);
+            }
         })
 
         .catch((error) => {

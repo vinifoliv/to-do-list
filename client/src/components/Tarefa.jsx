@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import './css/Tarefa.css';
 
-export default function Tarefa({ dados, onBlur, onRemove }) {
+export default function Tarefa({ dados, alterarTarefa, removerTarefa }) {
     
     // Hooks ----------------------------------------------------------------------------------------------------
     useEffect(() => {
@@ -21,31 +21,49 @@ export default function Tarefa({ dados, onBlur, onRemove }) {
     }, [ dados ]);
 
     // Markup ---------------------------------------------------------------------------------------------------
-
+    
     return (
         <div className="tarefa" id={ dados['id'] }>
             <div className='dados-tarefa'>
 
                 {/* Checkbox */}
-                <input type="checkbox" id={dados['id'] + '-checkbox'} className="checkbox" 
-                onBlur={() => onBlur(dados['id'])}/> &nbsp;
+                <input type="checkbox" 
+                    id={dados['id'] + '-checkbox'} 
+                    className="checkbox"
+                /> &nbsp;
 
                 {/* Titulo da tarefa */}
-                <input type="text" className="titulo-tarefa" 
-                id={dados['id'] + '-titulo-tarefa'} onBlur={() => onBlur(dados['id'])}/> &nbsp;
+                <input type="text" 
+                    className="titulo-tarefa" 
+                    id={dados['id'] + '-titulo-tarefa'}
+                /> &nbsp;
 
                 {/* Data de vencimento */}
-                <input type="date" className="data" id={dados['id'] + '-data'} 
-                onBlur={() => onBlur(dados['id'])}/> &nbsp;
+                <input type="date" 
+                    className="data" 
+                    id={dados['id'] + '-data'}
+                /> &nbsp;
 
                 {/* Botao de remocao */}
-                <span className="material-icons" onClick={() => onRemove(dados['id'])}>delete_forever</span> <br />
+                <span className="material-icons" onClick={() => removerTarefa(dados['id'])}>delete_forever</span> <br />
 
             </div>
 
             {/* Descricao */}
-            <textarea className="descricao" id={dados['id'] + '-descricao'} onBlur={() => onBlur(dados['id'])}>
-            </textarea>
+            <textarea 
+                className="descricao" 
+                id={dados['id'] + '-descricao'} 
+            ></textarea>
+
+            {/* Botao de alterar */}
+            <button 
+                className="alterar"
+                id={dados['id'] + 'botao'}
+                onClick={() => alterarTarefa(dados['id'])}
+            >Alterar</button>
         </div>
     );
+
+    // Helper functions
+
 }

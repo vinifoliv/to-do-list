@@ -20,7 +20,7 @@ class Database {
             return (await client.query(text, value)).rows;
         }
         catch (error) {
-            console.error(error);
+            throw error;
         }
         finally {
             client.release();
@@ -35,7 +35,7 @@ class Database {
             const text = 'INSERT INTO tarefas(titulo, vencimento, completa, descricao, id_usuario) VALUES($1, $2, $3, $4, $5);';
             const values = [tarefa['titulo'], tarefa['vencimento'], tarefa['completa'], tarefa['descricao'], tarefa['idUsuario']];
 
-            await client.query(text, values);
+            return (await client.query(text, values)).rowCount;
         } 
         catch (error) {
             console.error(error);
@@ -51,12 +51,18 @@ class Database {
 
         try {
             const text = 'UPDATE tarefas SET titulo = $1, vencimento = $2, completa = $3, descricao = $4 WHERE id = $5;';
-            const values = [tarefa['titulo'], tarefa['vencimento'], tarefa['completa'], tarefa['descricao'], tarefa['id']];
+            const values = [ 
+                tarefa['titulo'], 
+                tarefa['vencimento'], 
+                tarefa['completa'], 
+                tarefa['descricao'], 
+                tarefa['id'] 
+            ];
 
-            await client.query(text, values);
+            return (await client.query(text, values)).rowCount;
         } 
         catch (error) {
-            console.error(error);
+            throw error;
         }
         finally {
             client.release();
@@ -67,13 +73,13 @@ class Database {
         const client = await this.pool.connect();
 
         try {
-            const text = 'DELETE FROM tarefas WHERE id=$1;';
+            const text = 'DELETE FROM tarefas WHERE id = $1;';
             const value = [ id ];
 
-            await client.query(text, value);
+            return (await client.query(text, value)).rowCount;
         }
         catch (error) {
-            console.error(error);
+            throw error;
         }
         finally {
             client.release();
