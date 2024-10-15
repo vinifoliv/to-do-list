@@ -16,6 +16,7 @@ import Tarefa from './components/Tarefa';
     const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
     const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
     const [ logado, setLogado ] = useState(false);                  // Define qual a interface a que o usuario tem acesso
+    const [ token, setToken ] = useState('');                       // Guarda o JWT do login
 
     useEffect(() => { // Carrega as tarefas do banco quando logar
         if (logado) consultarTarefas();
@@ -26,7 +27,7 @@ import Tarefa from './components/Tarefa';
     }, [ tarefas, tipoAExibir ]);
 
     // Markup ---------------------------------------------------------------------------------------------------
-    if (!logado) return (<Login setLogado={setLogado}/>);
+    if (!logado) return (<Login logar={logar}/>);
     else {
         return (
             <div className="card">
@@ -57,6 +58,12 @@ import Tarefa from './components/Tarefa';
     }
 
     // Helper functions -----------------------------------------------------------------------------------------
+
+    // Gerencia o login
+    function logar(token) {
+        setToken(token);
+        setLogado(true);
+    }
 
     // Selecione o tipo de tarefa a ser exibida e renderiza a pagina novamente
     function alterarExibicao() {
@@ -214,7 +221,7 @@ import Tarefa from './components/Tarefa';
                 await consultarTarefas();
                 const message = await response.text();
                 throw new Error(message);
-            };
+            }
         })
 
         .catch((error) => {
