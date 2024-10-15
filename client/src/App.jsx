@@ -1,5 +1,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import './App.css';
+import Login from './components/Login'
 import Filtro from './components/Filtro';
 import Formulario from './components/Formulario';
 import Tarefa from './components/Tarefa';
@@ -14,40 +15,46 @@ import Tarefa from './components/Tarefa';
     const [ tarefas, setTarefas ] = useState([]);                   // Conjunto de todas as tarefas
     const [ tarefasFiltradas, setTarefasFiltradas ] = useState([]); // Tarefas a serem renderizadass
     const [ tipoAExibir, setTipoAExibir ] = useState('todas');      // Dita o filtro das tarefas
+    const [ logado, setLogado ] = useState(false);                  // Define qual a interface a que o usuario tem acesso
 
-    useEffect(() => async () => { // Carrega as tarefas do banco quando o componente renderizar
-        await consultarTarefas();
-    }, []);
+    useEffect(() => { // Carrega as tarefas do banco quando logar
+        if (logado) consultarTarefas();
+    }, [logado]);
 
-    useEffect(alterarExibicao, [ tarefas, tipoAExibir ]);
+    useEffect(() => {
+        if (logado) alterarExibicao();
+    }, [ tarefas, tipoAExibir ]);
 
     // Markup ---------------------------------------------------------------------------------------------------
-    return (
-        <div className="card">
+    if (!logado) return (<Login setLogado={setLogado}/>);
+    else {
+        return (
+            <div className="card">
 
-            {/* Titulo */}
-            <h1>Bem-vindo, Vinicius</h1>
+                {/* Titulo */}
+                <h1>Bem-vindo, Vinicius</h1>
 
-            {/* Formulario */}
-            <h3>Insira aqui a sua tarefa</h3>
-            <Formulario adicionarTarefa={adicionarTarefa}/> <br />
+                {/* Formulario */}
+                <h3>Insira aqui a sua tarefa</h3>
+                <Formulario adicionarTarefa={adicionarTarefa}/> <br />
 
-            {/* Carrossel com as tarefas*/}
-            <h3>Suas tarefas</h3>
+                {/* Carrossel com as tarefas*/}
+                <h3>Suas tarefas</h3>
 
-            <div className="carrosel">
-                <Filtro onClick={(tipo) => setTipoAExibir(tipo)}/>
-                <Suspense fallback={ <h4>Carregando as suas tarefas...</h4> }>
-                    {
-                        tarefasFiltradas.map((tarefa) => 
-                            <Tarefa dados={tarefa} alterarTarefa={alterarTarefa} removerTarefa={removerTarefa} />
-                        ) 
-                    }
-                </Suspense>
+                <div className="carrosel">
+                    <Filtro onClick={(tipo) => setTipoAExibir(tipo)}/>
+                    <Suspense fallback={ <h4>Carregando as suas tarefas...</h4> }>
+                        {
+                            tarefasFiltradas.map((tarefa) => 
+                                <Tarefa dados={tarefa} alterarTarefa={alterarTarefa} removerTarefa={removerTarefa} />
+                            ) 
+                        }
+                    </Suspense>
+                </div>
+
             </div>
-
-        </div>
-    );
+        );
+    }
 
     // Helper functions -----------------------------------------------------------------------------------------
 
