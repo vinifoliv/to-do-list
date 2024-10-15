@@ -2,13 +2,13 @@
 const express = require("express");
 const app = express();
 const cors = require('cors');
-const tarefasController = require('./controllers/tarefas');
+const tarefaController = require('./controllers/tarefaController');
 
 const PORT = 9000;
 
 // Configuracoes --------------------------------------------------------------------------------------
 app.use(express.json());
-app.use(tarefasController)
+app.use(tarefaController)
 app.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (sim, a seguranca foi para o beleleu)
 
 // Rotas --------------------------------------------------------------------------------------------------------
