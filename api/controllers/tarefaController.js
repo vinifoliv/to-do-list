@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const { TarefaModel } = require('../models/tarefaModel');
+const jwt = require('jsonwebtoken');
 
 // Configuracoes
 router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (sim, a seguranca foi para o beleleu)
@@ -10,11 +11,26 @@ router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (
 // Rotas --------------------------------------------------------------------------------------------------------
 // Consulta de tarefas 
 router.get('/consultar-tarefas', async (request, response) => {
+    console.log('Requisicao recebida!')
     let tarefaModel = new TarefaModel();
 
+    // Obtendo o token
+    const authHeader = request.headers['Authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    console.log(token);
+
     try {
-        let tarefas = await tarefaModel.consultarTarefas(1);
-        response.json(tarefas);
+        // Verificando
+        if (!token) throw new Error('Sem token de autorização!')
+    
+        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
+            if (error) throw new Error('Você não possui autorização!');
+            
+            console.log(usuario)
+
+            let tarefas = await tarefaModel.consultarTarefas(usuario.id);
+            response.json(tarefas);
+        });
     }
     catch (error) {
         console.log(error);

@@ -81,13 +81,6 @@ export default function Login({ logar }) {
     }
 
     async function cadastrar() {
-        if (!document.getElementById('nome-usuario').value ||
-            !document.getElementById('email-usuario').value ||
-            !document.getElementById('senha-usuario').value) {
-                alert('O email e a senha são obrigatórios!');
-                return;
-        }
-
         // Montando o objeto usuario
         let nome = document.getElementById('nome-usuario').value;
         let email = document.getElementById('email-usuario').value;
@@ -97,6 +90,8 @@ export default function Login({ logar }) {
             email: email,
             senha: senha
         }
+
+        alert(usuario['nome']);
 
         // Configurando a requisicao
         const options = {
@@ -108,6 +103,7 @@ export default function Login({ logar }) {
         }
 
         fetch(DOMAIN + '/cadastrar-usuario', options)
+
         .then(async (response) => {
             if (!response.ok) {
                 const message = await response.text();

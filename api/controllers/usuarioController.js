@@ -13,7 +13,7 @@ router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (
 // Rotas --------------------------------------------------------------------------------------------------------
 router.post('/cadastrar-usuario', async (request, response) => {
     let usuarioModel = new UsuarioModel();
-    let novoUsuario = request.body;
+    let novoUsuario = request.body; // Objeto com nome, email e senha
 
     if (!novoUsuario['nome'] || !novoUsuario['email'] || !novoUsuario['senha'])
         throw new Error('Todos os campos são obrigatórios para o cadastro!');
@@ -21,14 +21,14 @@ router.post('/cadastrar-usuario', async (request, response) => {
     try {
         // Verifica se o usuario ja existe
         const usuarioJaExistente = await usuarioModel.consultarUsuario(novoUsuario['email']);
-        if (usuarioJaExistente > 0) throw new Error('Email já cadastrado.');
+        //if (usuarioJaExistente.rowCount > 0) throw new Error('Email já cadastrado.');
 
         // Altera a senha para o hash gerado a partir dela
         novoUsuario['senha'] = await bcrypt.hash(novoUsuario['senha'], 10);
 
         // Cadastra o usuario e obtem o seu id e nome, gerando um token a partir deles
-        const dadosParaToken = await usuarioModel.cadastrarUsuario(novoUsuario).rows[0];
-        const token = gerarToken(novoUsuario);
+        const dadosParaToken = await usuarioModel.cadastrarUsuario(novoUsuario);
+        const token = gerarToken(dadosParaToken);
 
         response.status(201).json({ content: token });
     }

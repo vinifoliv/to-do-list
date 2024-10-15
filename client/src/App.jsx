@@ -176,7 +176,17 @@ import Tarefa from './components/Tarefa';
 
     // Consulta todas as tarefas do usuario e altera o tipo de exibicao
     async function consultarTarefas() {       
-        fetch(DOMAIN + '/consultar-tarefas')
+        // Configuracoes da requisicao
+        const options = {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ${token}',
+                'Content-Type': 'application/json'
+            }
+        }
+        console.log(options['headers']);
+        
+        fetch(DOMAIN + '/consultar-tarefas', options)
         .then(async (response) => {
 
             if (response.ok) {
@@ -193,7 +203,7 @@ import Tarefa from './components/Tarefa';
         .catch((error) => {
             alert('Erro ao consultar suas tarefas: ' + error);
         });
-    }
+    }   
 
     // Altera uma tarefa quando ela sofre alteracao
     async function alterarTarefa(id) {
