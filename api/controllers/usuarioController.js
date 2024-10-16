@@ -8,7 +8,11 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 // Configuracoes
-router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (sim, a seguranca foi para o beleleu)
+router.use(cors({
+    origin: '*',
+    methods: ['POST', 'GET', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
 // Rotas --------------------------------------------------------------------------------------------------------
 router.post('/cadastrar-usuario', async (request, response) => {
@@ -39,18 +43,17 @@ router.post('/cadastrar-usuario', async (request, response) => {
 
 router.post('/login', async (request, response) => {
     let usuarioModel = new UsuarioModel();
-    let usuario = request.body; // O usuario aqui e somente email e senha
+    let usuario = request.body; // O usuario aqui eh somente email e senha
 
-    if (!usuario['email'] || !usuario['senha'])
-        throw new Error('Email e senha são obrigatórios!');
+    if (!usuario['email'] || !usuario['senha']) throw new Error('Email e senha são obrigatórios!');
 
     try {
         // Verifica se o usuario existe
-        const usuarioExiste = await usuarioModel.consultarUsuario(usuario['email']).rows[0];
-        if (!usuarioExiste) throw new Error('Usuário não cadastrado.');
+        const usuarioExistente = await usuarioModel.consultarUsuario(usuario['email']);
+        if (!usuarioExistente) throw new Error('Usuário não cadastrado.');
 
         // Verifica se a senha bate
-        const senhaValida = await bcrypt.compare(usuario['senha'], usuarioExiste.senha);
+        const senhaValida = await bcrypt.compare(usuario['senha'], usuarioExistente.senha);
         if (!senhaValida) throw new Error('Senha incorreta.');
 
         const token = gerarToken(usuario);

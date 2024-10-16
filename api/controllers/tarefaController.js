@@ -11,13 +11,12 @@ router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (
 // Rotas --------------------------------------------------------------------------------------------------------
 // Consulta de tarefas 
 router.get('/consultar-tarefas', async (request, response) => {
-    console.log('Requisicao recebida!')
     let tarefaModel = new TarefaModel();
 
     // Obtendo o token
     const authHeader = request.headers['Authorization'];
+
     const token = authHeader && authHeader.split(' ')[1];
-    console.log(token);
 
     try {
         // Verificando

@@ -5,7 +5,7 @@ export default function Login({ logar }) {
 
     // Markup --------------------------------------------------------------------------------------------------
     return (
-        <form className="card-login">
+        <div className="card-login">
             <h1 className="titulo-login">Login</h1>
             
             {/* Nome do usuario */}
@@ -32,20 +32,13 @@ export default function Login({ logar }) {
                 <button onClick={cadastrar}>Cadastrar-se</button>
             </div>
 
-        </form>
+        </div>
     );
 
     // Helper functions ----------------------------------------------------------------------------------------------------------
 
-
     // Requisicoes a API ---------------------------------------------------------------------------------------------------------
     async function login() {
-        if (!document.getElementById('email-usuario').value ||
-            !document.getElementById('senha-usuario').value) {
-                alert('O email e a senha são obrigatórios!');
-                return;
-        }
-
         // Montando o objeto com email e senha
         let email = document.getElementById('email-usuario').value;
         let senha = document.getElementById('senha-usuario').value;
@@ -72,7 +65,7 @@ export default function Login({ logar }) {
 
             alert('Login realizado com sucesso!');
             const token = await response.json();
-            logar(token);
+            await logar(token);
         })
 
         .catch((error) => {
@@ -85,23 +78,20 @@ export default function Login({ logar }) {
         let nome = document.getElementById('nome-usuario').value;
         let email = document.getElementById('email-usuario').value;
         let senha = document.getElementById('senha-usuario').value;
+
         let usuario = {
             nome: nome,
             email: email,
             senha: senha
         }
 
-        alert(usuario['nome']);
-
         // Configurando a requisicao
         const options = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(usuario)
         }
-
+        alert(DOMAIN + '/cadastrar-usuario')
         fetch(DOMAIN + '/cadastrar-usuario', options)
 
         .then(async (response) => {
@@ -111,8 +101,9 @@ export default function Login({ logar }) {
             }
 
             alert(nome + ', você foi cadastrado com sucesso!');
-            const token = await response.json();
-            logar(token);
+            const tokenJson = await response.json();
+            const token = tokenJson.content;
+            await logar(token);
         })
 
         .catch((error) => {

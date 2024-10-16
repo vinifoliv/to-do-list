@@ -34,7 +34,8 @@ class UsuarioModel {
             const text = 'SELECT * FROM usuarios WHERE email = $1;';
             const value = [email];
 
-            return await client.query(text, value);
+            const result = await client.query(text, value);
+            return result.rows[0];
         }
         catch (error) {
             throw new Error(error);
