@@ -1,4 +1,4 @@
-// Imports
+// Imports ------------------------------------------------------------------------------------------------------
 require('dotenv').config({ override: true });
 const express = require('express');
 const router = express.Router();
@@ -7,7 +7,7 @@ const UsuarioModel = require('../models/usuarioModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-// Configuracoes
+// Configurações ------------------------------------------------------------------------------------------------
 router.use(cors({
     origin: '*',
     methods: ['POST', 'GET', 'OPTIONS'],
@@ -17,20 +17,21 @@ router.use(cors({
 // Rotas --------------------------------------------------------------------------------------------------------
 router.post('/cadastrar-usuario', async (request, response) => {
     let usuarioModel = new UsuarioModel();
-    let novoUsuario = request.body; // Objeto com nome, email e senha
-
-    if (!novoUsuario['nome'] || !novoUsuario['email'] || !novoUsuario['senha'])
-        throw new Error('Todos os campos são obrigatórios para o cadastro!');
+    let novoUsuario = request.body; // Objeto com NOME, EMAIL e SENHA
 
     try {
-        // Verifica se o usuario ja existe
+        // Validação dos dados
+        if (!novoUsuario['nome'] || !novoUsuario['email'] || !novoUsuario['senha']) 
+            throw new Error('Todos os campos são obrigatórios para o cadastro!');
+
+        // Verifica se o usuário já existe
         const usuarioJaExistente = await usuarioModel.consultarUsuario(novoUsuario['email']);
-        //if (usuarioJaExistente.rowCount > 0) throw new Error('Email já cadastrado.');
+        if (usuarioJaExistente.rowCount > 0) throw new Error('Email já cadastrado.');
 
         // Altera a senha para o hash gerado a partir dela
         novoUsuario['senha'] = await bcrypt.hash(novoUsuario['senha'], 10);
 
-        // Cadastra o usuario e obtem o seu id e nome, gerando um token a partir deles
+        // Cadastra o usuário e obtém o seu id e nome, gerando um token a partir deles
         const dadosParaToken = await usuarioModel.cadastrarUsuario(novoUsuario);
         const token = gerarToken(dadosParaToken);
 
@@ -43,16 +44,17 @@ router.post('/cadastrar-usuario', async (request, response) => {
 
 router.post('/login', async (request, response) => {
     let usuarioModel = new UsuarioModel();
-    let usuario = request.body; // O usuario aqui eh somente email e senha
-
-    if (!usuario['email'] || !usuario['senha']) throw new Error('Email e senha são obrigatórios!');
+    let usuario = request.body; // Objeto com EMAIL e SENHA
 
     try {
-        // Verifica se o usuario existe
+        // Validação dos dados
+        if (!usuario['email'] || !usuario['senha']) throw new Error('Email e senha são obrigatórios!');
+
+        // Verifica se o usuário existe
         const usuarioExistente = await usuarioModel.consultarUsuario(usuario['email']);
         if (!usuarioExistente) throw new Error('Usuário não cadastrado.');
 
-        // Verifica se a senha bate
+        // Verifica a senha
         const senhaValida = await bcrypt.compare(usuario['senha'], usuarioExistente.senha);
         if (!senhaValida) throw new Error('Senha incorreta.');
 
@@ -67,7 +69,7 @@ router.post('/login', async (request, response) => {
 
 // Helper functions ---------------------------------------------------------------------------------------------
 
-// Gera um JWT
+// Gera um JWT a partir de um objeto usuario
 function gerarToken(usuario) {
     return jwt.sign(
         { 

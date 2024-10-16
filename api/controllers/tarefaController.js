@@ -1,15 +1,14 @@
-// Imports
+// Imports ------------------------------------------------------------------------------------------------------
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const { TarefaModel } = require('../models/tarefaModel');
 const jwt = require('jsonwebtoken');
 
-// Configuracoes
-router.use(cors( {origin: '*'} )); // Permite requisicoes de quaisquer origens (sim, a seguranca foi para o beleleu)
+// Configurações ------------------------------------------------------------------------------------------------
+router.use(cors( {origin: '*'} )); // Permite requisições de quaisquer origens (sim, a segurança foi para o beleléu)
 
 // Rotas --------------------------------------------------------------------------------------------------------
-// Consulta de tarefas 
 router.get('/consultar-tarefas', async (request, response) => {
     let tarefaModel = new TarefaModel();
 
@@ -24,6 +23,7 @@ router.get('/consultar-tarefas', async (request, response) => {
         jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
             if (error) throw new Error('Você não possui autorização!');
 
+            // Consulta das tarefas
             let tarefas = await tarefaModel.consultarTarefas(usuario.id);
             response.json(tarefas);
         });
@@ -34,7 +34,6 @@ router.get('/consultar-tarefas', async (request, response) => {
     }
 });
 
-// Adicao de tarefas 
 router.post('/adicionar-tarefa', async (request, response) => {
     let tarefaModel = new TarefaModel();
     let tarefa = request.body;
@@ -52,15 +51,15 @@ router.post('/adicionar-tarefa', async (request, response) => {
 
             tarefa.idUsuario = usuario.id;
 
-            // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
+            // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário acrescentar tarefas para o dia atual
             let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
             let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
 
-            // Validacao dos dados
-            if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
+            // Validação dos dados
+            if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
             if (dataTarefa < dataHoje) throw new Error('Data inválida!');
 
-            let rowCount = await tarefaModel.adicionarTarefa(tarefa); // Objeto com a tarefa
+            let rowCount = await tarefaModel.adicionarTarefa(tarefa);
             
             if (rowCount > 0) response.sendStatus(200);
             else response.status(400).send('Tarefa inválida.');
@@ -72,11 +71,9 @@ router.post('/adicionar-tarefa', async (request, response) => {
     }
 });
 
-// Alteracao de tarefas 
 router.put('/alterar-tarefa', async (request, response) => {
     let tarefaModel = new TarefaModel();
     let tarefa = request.body;
-
 
     // Obtendo o token
     const authHeader = request.headers.authorization;
@@ -89,15 +86,16 @@ router.put('/alterar-tarefa', async (request, response) => {
         jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
             if (error) throw new Error('Você não possui autorização!');
 
-            // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
+            // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário estipular tarefas para o dia atual
             let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
             let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
 
-            // Validacao dos dados
-            if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
+            // Validação dos dados
+            if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
             if (dataTarefa < dataHoje) throw new Error('Data inválida!');
 
-            let rowCount = await tarefaModel.alterarTarefa(request.body); // Objeto com a tarefa
+            let rowCount = await tarefaModel.alterarTarefa(request.body);
+
             if (rowCount > 0) response.sendStatus(200);
             else response.status(404).send('Tarefa não encontrada.');
         });
@@ -108,7 +106,6 @@ router.put('/alterar-tarefa', async (request, response) => {
     }
 });
 
-// Remocao de tarefas 
 router.delete('/remover-tarefa/:id', async (request, response) => {
     let tarefaModel = new TarefaModel();
 
@@ -124,6 +121,7 @@ router.delete('/remover-tarefa/:id', async (request, response) => {
             if (error) throw new Error('Você não possui autorização!');
 
             let rowCount = await tarefaModel.removerTarefa(request.params.id); // Objeto com o id da tarefa
+            
             if (rowCount > 0) response.sendStatus(200);
             else response.status(404).send('Tarefa não encontrada.');
         });
