@@ -112,10 +112,21 @@ router.put('/alterar-tarefa', async (request, response) => {
 router.delete('/remover-tarefa/:id', async (request, response) => {
     let tarefaModel = new TarefaModel();
 
+    // Obtendo o token
+    const authHeader = request.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
     try {
-        let rowCount = await tarefaModel.removerTarefa(request.params.id); // Objeto com o id da tarefa
-        if (rowCount > 0) response.sendStatus(200);
-        else response.status(404).send('Tarefa não encontrada.');
+        // Verificando
+        if (!token) throw new Error('Sem token de autorização!');
+
+        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
+            if (error) throw new Error('Você não possui autorização!');
+
+            let rowCount = await tarefaModel.removerTarefa(request.params.id); // Objeto com o id da tarefa
+            if (rowCount > 0) response.sendStatus(200);
+            else response.status(404).send('Tarefa não encontrada.');
+        });
     }
     catch (error) {
         console.log(error);

@@ -238,7 +238,12 @@
 
         // Remove uma tarefa
         async function removerTarefa(id) {
-            fetch(DOMAIN + '/remover-tarefa/' + id, { method: 'DELETE' })
+            const options = {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            }
+
+            fetch(DOMAIN + '/remover-tarefa/' + id, options)
 
             .then(async (response) => {
                 if (response.ok) {
