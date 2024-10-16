@@ -50,6 +50,8 @@ router.post('/adicionar-tarefa', async (request, response) => {
         jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
             if (error) throw new Error('Você não possui autorização!');
 
+            tarefa.idUsuario = usuario.id;
+
             // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
             let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
             let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);

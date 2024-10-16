@@ -105,8 +105,7 @@
                 titulo: titulo,
                 vencimento: data,
                 completa: false,
-                descricao: descricao,
-                idUsuario: 1
+                descricao: descricao
             }
         }
 
