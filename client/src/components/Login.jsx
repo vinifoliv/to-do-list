@@ -35,19 +35,18 @@ export default function Login({ logar }) {
         </div>
     );
 
-    // Helper functions ----------------------------------------------------------------------------------------------------------
-
-    // Requisicoes a API ---------------------------------------------------------------------------------------------------------
+    // Requisições à API ---------------------------------------------------------------------------------------------------------
     async function login() {
-        // Montando o objeto com email e senha
+        // Montando o objeto com EMAIL e SENHA
         let email = document.getElementById('email-usuario').value;
         let senha = document.getElementById('senha-usuario').value;
+
         let usuario = {
             email: email,
             senha: senha
         }
 
-        // Configurando a requisicao
+        // Configurando a requisição
         const options = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -73,7 +72,7 @@ export default function Login({ logar }) {
     }
 
     async function cadastrar() {
-        // Montando o objeto usuario
+        // Montando o objeto com NOME, EMAIL e SENHA
         let nome = document.getElementById('nome-usuario').value;
         let email = document.getElementById('email-usuario').value;
         let senha = document.getElementById('senha-usuario').value;
@@ -84,7 +83,7 @@ export default function Login({ logar }) {
             senha: senha
         }
 
-        // Configurando a requisicao
+        // Configurando a requisição
         const options = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

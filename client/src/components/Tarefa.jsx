@@ -4,6 +4,8 @@ import './css/Tarefa.css';
 export default function Tarefa({ dados, alterarTarefa, removerTarefa }) {
     
     // Hooks ----------------------------------------------------------------------------------------------------
+
+    // Atualiza os dados exibidos no formulário de tarefas sempre que o props dados for alterado
     useEffect(() => {
         let id = dados['id'];
         // Checkbox
@@ -63,7 +65,4 @@ export default function Tarefa({ dados, alterarTarefa, removerTarefa }) {
             >Alterar</button>
         </div>
     );
-
-    // Helper functions
-
 }
