@@ -26,7 +26,7 @@ router.post('/cadastrar-usuario', async (request, response) => {
 
         // Verifica se o usuário já existe
         const usuarioJaExistente = await usuarioModel.consultarUsuario(novoUsuario['email']);
-        if (usuarioJaExistente.rowCount > 0) throw new Error('Email já cadastrado.');
+        if (usuarioJaExistente) throw new Error('Email já cadastrado.');
 
         // Altera a senha para o hash gerado a partir dela
         novoUsuario['senha'] = await bcrypt.hash(novoUsuario['senha'], 10);

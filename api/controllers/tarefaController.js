@@ -19,14 +19,11 @@ router.get('/consultar-tarefas', async (request, response) => {
     try {
         // Verificando
         if (!token) throw new Error('Sem token de autorização!');
-    
-        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
-            if (error) throw new Error('Você não possui autorização!');
+        const usuario = jwt.verify(token, process.env.JWT_SECRET);
 
-            // Consulta das tarefas
-            let tarefas = await tarefaModel.consultarTarefas(usuario.id);
-            response.json(tarefas);
-        });
+        // Consulta das tarefas
+        let tarefas = await tarefaModel.consultarTarefas(usuario.id);
+        response.json(tarefas);
     }
     catch (error) {
         console.log(error);
@@ -45,25 +42,22 @@ router.post('/adicionar-tarefa', async (request, response) => {
     try {
         // Verificando
         if (!token) throw new Error('Sem token de autorização!');
+        const usuario = jwt.verify(token, process.env.JWT_SECRET);
 
-        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
-            if (error) throw new Error('Você não possui autorização!');
+        tarefa.idUsuario = usuario.id;
 
-            tarefa.idUsuario = usuario.id;
+        // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário acrescentar tarefas para o dia atual
+        let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
+        let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
 
-            // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário acrescentar tarefas para o dia atual
-            let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
-            let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+        // Validação dos dados
+        if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
+        if (dataTarefa < dataHoje) throw new Error('Data inválida!');
 
-            // Validação dos dados
-            if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
-            if (dataTarefa < dataHoje) throw new Error('Data inválida!');
-
-            let rowCount = await tarefaModel.adicionarTarefa(tarefa);
-            
-            if (rowCount > 0) response.sendStatus(200);
-            else response.status(400).send('Tarefa inválida.');
-        });
+        let rowCount = await tarefaModel.adicionarTarefa(tarefa);
+        
+        if (rowCount > 0) response.sendStatus(200);
+        else response.status(400).send('Tarefa inválida.');
     }
     catch (error) {
         console.log(error);
@@ -82,23 +76,20 @@ router.put('/alterar-tarefa', async (request, response) => {
     try {
         // Verificando
         if (!token) throw new Error('Sem token de autorização!');
+        const usuario = jwt.verify(token, process.env.JWT_SECRET);
 
-        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
-            if (error) throw new Error('Você não possui autorização!');
+        // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário estipular tarefas para o dia atual
+        let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
+        let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
 
-            // Como as horas não fazem sentido para a data, zerei ambas para permitir ao usuário estipular tarefas para o dia atual
-            let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
-            let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+        // Validação dos dados
+        if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
+        if (dataTarefa < dataHoje) throw new Error('Data inválida!');
 
-            // Validação dos dados
-            if (!tarefa['titulo']) throw new Error('O título é obrigatório!');
-            if (dataTarefa < dataHoje) throw new Error('Data inválida!');
+        let rowCount = await tarefaModel.alterarTarefa(request.body);
 
-            let rowCount = await tarefaModel.alterarTarefa(request.body);
-
-            if (rowCount > 0) response.sendStatus(200);
-            else response.status(404).send('Tarefa não encontrada.');
-        });
+        if (rowCount > 0) response.sendStatus(200);
+        else response.status(404).send('Tarefa não encontrada.');
     }
     catch (error) {
         console.log(error);
@@ -117,14 +108,12 @@ router.delete('/remover-tarefa/:id', async (request, response) => {
         // Verificando
         if (!token) throw new Error('Sem token de autorização!');
 
-        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
-            if (error) throw new Error('Você não possui autorização!');
+        const usuario = jwt.verify(token, process.env.JWT_SECRET);
 
-            let rowCount = await tarefaModel.removerTarefa(request.params.id); // Objeto com o id da tarefa
+        let rowCount = await tarefaModel.removerTarefa(request.params.id); // Objeto com o id da tarefa
             
-            if (rowCount > 0) response.sendStatus(200);
-            else response.status(404).send('Tarefa não encontrada.');
-        });
+        if (rowCount > 0) response.sendStatus(200);
+        else response.status(404).send('Tarefa não encontrada.');
     }
     catch (error) {
         console.log(error);
