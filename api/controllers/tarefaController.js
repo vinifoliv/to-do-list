@@ -68,7 +68,7 @@ router.post('/adicionar-tarefa', async (request, response) => {
     }
     catch (error) {
         console.log(error);
-        response.status(500).send(error);
+        response.status(500).send('Erro: ' + error);
     }
 });
 
@@ -77,18 +77,30 @@ router.put('/alterar-tarefa', async (request, response) => {
     let tarefaModel = new TarefaModel();
     let tarefa = request.body;
 
-    // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
-    let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
-    let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+
+    // Obtendo o token
+    const authHeader = request.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
 
     try {
-        // Validacao dos dados
-        if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
-        if (dataTarefa < dataHoje) throw new Error('Data inválida!');
+        // Verificando
+        if (!token) throw new Error('Sem token de autorização!');
 
-        let rowCount = await tarefaModel.alterarTarefa(request.body); // Objeto com a tarefa
-        if (rowCount > 0) response.sendStatus(200);
-        else response.status(404).send('Tarefa não encontrada.');
+        jwt.verify(token, process.env.JWT_SECRET, async (error, usuario) => {
+            if (error) throw new Error('Você não possui autorização!');
+
+            // Como as horas nao fazem sentido para a data, zero ambas para permitir ao usuario acrescentar tarefas para o dia atual
+            let dataHoje = new Date().setUTCHours(0, 0, 0, 0);
+            let dataTarefa = new Date(tarefa['vencimento']).setUTCHours(0, 0, 0, 0);
+
+            // Validacao dos dados
+            if (tarefa['titulo'] === '') throw new Error('O título é obrigatório!');
+            if (dataTarefa < dataHoje) throw new Error('Data inválida!');
+
+            let rowCount = await tarefaModel.alterarTarefa(request.body); // Objeto com a tarefa
+            if (rowCount > 0) response.sendStatus(200);
+            else response.status(404).send('Tarefa não encontrada.');
+        });
     }
     catch (error) {
         console.log(error);
