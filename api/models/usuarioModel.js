@@ -2,9 +2,8 @@ const { Database } = require('../database');
 require('dotenv').config({ override: true }); // Carrega as variáveis de ambiente
 
 class UsuarioModel {
-    
-    // Cria um usuario
-    async cadastrarUsuario(usuario) { // recebe o objeto com nome, email e senha
+    // Cadastra um usuário no banco
+    async cadastrarUsuario(usuario) { // Argumento é um objeto com NOME, EMAIL e SENHA
         const database = new Database();
         const client = await database.pool.connect();
 
@@ -15,7 +14,6 @@ class UsuarioModel {
 
             // Query
             const result = await client.query(text, values);
-
             return result.rows[0];
         }
         catch (error) {
@@ -26,14 +24,17 @@ class UsuarioModel {
         }
     }
 
+    // Consulta um usuário no banco a partir do EMAIL
     async consultarUsuario(email) {
         const database = new Database();
         const client = await database.pool.connect();
 
         try {
+            // Montando a consulta
             const text = 'SELECT * FROM usuarios WHERE email = $1;';
             const value = [email];
 
+            // Query
             const result = await client.query(text, value);
             return result.rows[0];
         }
