@@ -50,9 +50,7 @@ export default function Login({ logar }) {
         // Configurando a requisicao
         const options = {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(usuario)
         }
 
@@ -64,7 +62,8 @@ export default function Login({ logar }) {
             }
 
             alert('Login realizado com sucesso!');
-            const token = await response.json();
+            const tokenJson = await response.json();
+            const token = tokenJson.content;
             await logar(token);
         })
 
@@ -91,7 +90,7 @@ export default function Login({ logar }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(usuario)
         }
-        alert(DOMAIN + '/cadastrar-usuario')
+
         fetch(DOMAIN + '/cadastrar-usuario', options)
 
         .then(async (response) => {

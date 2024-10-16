@@ -56,7 +56,7 @@ router.post('/login', async (request, response) => {
         const senhaValida = await bcrypt.compare(usuario['senha'], usuarioExistente.senha);
         if (!senhaValida) throw new Error('Senha incorreta.');
 
-        const token = gerarToken(usuario);
+        const token = gerarToken(usuarioExistente);
 
         response.status(200).json({ content: token });
     }

@@ -146,7 +146,8 @@
             const options = {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(tarefa)
             }
@@ -172,7 +173,7 @@
         }
 
         // Consulta todas as tarefas do usuario e altera o tipo de exibicao
-        async function consultarTarefas() {       
+        async function consultarTarefas() { 
             // Configuracoes da requisicao
             const options = {
                 method: 'GET',
